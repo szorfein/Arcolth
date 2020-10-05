@@ -40,7 +40,7 @@ download_dots() {
   (cd /tmp/dotfiles-master \
     && cp -a awesomewm/.config/awesome "$HOME_DIR"/.config/ \
     && cp -a picom/.config/picom "$HOME_DIR"/.config/ \
-    && cp -a .x/.* "$HOME_DIR"/ \
+    && cp -a .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
     && cp -a themes "$HOME_DIR"/.dotfiles/
   )
   cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
@@ -63,18 +63,22 @@ add_omz() {
   [ -f /tmp/oh-my-zsh.tar.gz ] || curl -s -L -o /tmp/oh-my-zsh.tar.gz https://github.com/robbyrussell/oh-my-zsh/archive/master.tar.gz
   [ -d /tmp/ohmyzsh-master ] || (cd /tmp && tar xf oh-my-zsh.tar.gz)
   cp -a /tmp/ohmyzsh-master "$HOME_DIR"/.oh-my-zsh
+
+  # Remove grml-zsh-config, we have a default .zshrc
+  sed -i 's/grml-zsh-config//g' "$WORKDIR"/packages.x86_64
+
 cat << EOF | tee "$HOME_DIR"/.zshrc
-export PATH=$HOME/bin:$PATH
-export PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
+export PATH=\$HOME/bin:\$PATH
+export PATH="\$PATH:\$(ruby -e 'puts Gem.user_dir')/bin"
 export TERMINAL=urxvt
-export GPG_TTY=$(tty)
+export GPG_TTY=\$(tty)
 export GPG_AGENT_INFO=""
-export ZSH=$HOME/.oh-my-zsh
+export ZSH=\$HOME/.oh-my-zsh
 # Oh-my-zsh
 ZSH_THEME="random"
 DISABLE_UPDATE_PROMPT=true
 DISABLE_AUTO_UPDATE=true
-source $ZSH/oh-my-zsh.sh
+source \$ZSH/oh-my-zsh.sh
 EOF
 }
 
@@ -86,6 +90,7 @@ add_archzfs() {
 Server = https://archzfs.com/\$repo/\$arch
 EOF
 
+  # https://github.com/archzfs/archzfs/wiki#using-the-archzfs-repository
   echo "[+] Updating keys..."
   pacman-key -r DDF7DB817396A49B2A2723F7403BD972F75D9D76 --keyserver hkp://pool.sks-keyservers.net:80
   pacman-key --lsign-key DDF7DB817396A49B2A2723F7403BD972F75D9D76 --keyserver hkp://pool.sks-keyservers.net:80
@@ -100,6 +105,7 @@ sudo
 midori
 xclip
 rxvt-unicode
+linux-headers
 # Touchpad
 xorg-xinput
 xf86-input-libinput
