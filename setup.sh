@@ -4,7 +4,6 @@ set -o errexit -o nounset
 
 WORKDIR="/root/iso"
 HOME_DIR="$WORKDIR"/airootfs/etc/skel
-THEME="lines"
 
 die() { echo "[-] $1"; exit 1; }
 goodbye() { echo "\n[+] Script ended, bye"; exit 0; }
@@ -21,6 +20,7 @@ cleanup() {
 }
 
 copy_release() {
+  echo "Check dependencies"
   if ! hash mkarchiso 2>/dev/null ; then
     pacman -S archiso --noconfirm
   fi
@@ -35,6 +35,7 @@ create_dirs() {
 }
 
 download_dots() {
+  echo "Adding dotfiles"
   [ -f /tmp/dotfiles.tar.gz ] || curl -s -L -o /tmp/dotfiles.tar.gz https://github.com/szorfein/dotfiles/archive/master.tar.gz
   [ -d /tmp/dotfiles-master ] || (cd /tmp && tar xf dotfiles.tar.gz)
   (cd /tmp/dotfiles-master \
@@ -60,6 +61,7 @@ EOF
 }
 
 add_omz() {
+  echo "Adding oh-my-zsh"
   [ -f /tmp/oh-my-zsh.tar.gz ] || curl -s -L -o /tmp/oh-my-zsh.tar.gz https://github.com/robbyrussell/oh-my-zsh/archive/master.tar.gz
   [ -d /tmp/ohmyzsh-master ] || (cd /tmp && tar xf oh-my-zsh.tar.gz)
   cp -a /tmp/ohmyzsh-master "$HOME_DIR"/.oh-my-zsh
@@ -83,6 +85,7 @@ EOF
 }
 
 add_archzfs() {
+  echo "Adding Archzfs"
   pacman_conf="$WORKDIR"/pacman.conf
   [ -f "$pacman_conf" ] || die "No pacman.conf found"
   cat << EOF | tee -a "$pacman_conf"
@@ -99,6 +102,7 @@ EOF
 
 add_dependencies() {
   cat << EOF | tee -a "$WORKDIR"/packages.x86_64
+# Extra deps
 ruby
 lxdm-gtk3
 sudo
@@ -106,6 +110,8 @@ midori
 xclip
 rxvt-unicode
 linux-headers
+# ZFS
+archzfs-linux
 # Touchpad
 xorg-xinput
 xf86-input-libinput
@@ -123,9 +129,21 @@ xf86-video-amdgpu
 xf86-video-ati
 xf86-video-nouveau
 # Nipe
+perl-config-simple
+perl-cpan-meta-check
+perl-yaml
+perl-capture-tiny
+perl-sub-name
+perl-pod-coverage
 iptables
 tor
 EOF
+}
+
+add_services() {
+  echo "Adding systemd services"
+  mkdir -p "$WORKDIR"/airootfs/etc/systemd/system/multi-user.target.wants
+  ln -s /usr/lib/systemd/system/lxdm.service archlive/airootfs/etc/systemd/system/display-manager.service
 }
 
 main() {
@@ -137,6 +155,7 @@ main() {
   add_omz
   add_archzfs
   add_dependencies
+  add_services
 }
 
 main "$@"
