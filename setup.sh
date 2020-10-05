@@ -39,14 +39,43 @@ download_dots() {
   [ -d /tmp/dotfiles-master ] || (cd /tmp && tar xf dotfiles.tar.gz)
   (cd /tmp/dotfiles-master \
     && cp -a awesomewm/.config/awesome "$HOME_DIR"/.config/ \
+    && cp -a picom/.config/picom "$HOME_DIR"/.config/ \
+    && cp -a .x/.* "$HOME_DIR"/ \
     && cp -a themes "$HOME_DIR"/.dotfiles/
   )
+  cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
+terminal = os.getenv("TERMINAL") or "urxvt"
+terminal_cmd = terminal .. " -e "
+editor = os.getenv("EDITOR") or "vim"
+editor_cmd = terminal .. " -e " .. editor
+web_browser = "midori"
+file_browser = "vifm"
+terminal_args = { " -T ", " -e " }
+net_device = "wlan0"
+disks = { "/home" }
+cpu_core = 1
+sound_system = "pulseaudio"
+password = "awesome"
+EOF
 }
 
 add_omz() {
   [ -f /tmp/oh-my-zsh.tar.gz ] || curl -s -L -o /tmp/oh-my-zsh.tar.gz https://github.com/robbyrussell/oh-my-zsh/archive/master.tar.gz
   [ -d /tmp/ohmyzsh-master ] || (cd /tmp && tar xf oh-my-zsh.tar.gz)
   cp -a /tmp/ohmyzsh-master "$HOME_DIR"/.oh-my-zsh
+cat << EOF | tee "$HOME_DIR"/.zshrc
+export PATH=$HOME/bin:$PATH
+export PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
+export TERMINAL=urxvt
+export GPG_TTY=$(tty)
+export GPG_AGENT_INFO=""
+export ZSH=$HOME/.oh-my-zsh
+# Oh-my-zsh
+ZSH_THEME="random"
+DISABLE_UPDATE_PROMPT=true
+DISABLE_AUTO_UPDATE=true
+source $ZSH/oh-my-zsh.sh
+EOF
 }
 
 add_archzfs() {
@@ -65,9 +94,29 @@ EOF
 
 add_dependencies() {
   cat << EOF | tee -a "$WORKDIR"/packages.x86_64
-awesome
 ruby
-# for Nipe
+lxdm-gtk3
+sudo
+midori
+xclip
+rxvt-unicode
+# Touchpad
+xorg-xinput
+xf86-input-libinput
+# Awesome
+awesome
+picom
+feh
+stow
+xorg-server
+# GPU drivers
+xf86-video-fbdev
+xf86-video-vesa
+xf86-video-intel
+xf86-video-amdgpu
+xf86-video-ati
+xf86-video-nouveau
+# Nipe
 iptables
 tor
 EOF
