@@ -8,7 +8,7 @@ HOME_DIR="$WORKDIR"/airootfs/etc/skel
 die() { echo "[-] $1"; exit 1; }
 goodbye() { echo "\n[+] Script ended, bye"; exit 0; }
 
-trap goodbye SIGTERM
+trap goodbye EXIT
 
 check_permission() {
   myid=$(id -u)
@@ -16,14 +16,23 @@ check_permission() {
 }
 
 cleanup() {
-  [ -d "$WORKDIR" ] && rm -rf "$WORKDIR"
+  [ -d "$WORKDIR" ] && {
+    echo "Clean older $WORKDIR"
+    rm -rf "$WORKDIR"
+  }
+}
+
+check_dep() {
+  if ! hash "$1" 2>/dev/null ; then
+    pacman -S "$2" --noconfirm
+  fi
 }
 
 copy_release() {
   echo "Check dependencies"
-  if ! hash mkarchiso 2>/dev/null ; then
-    pacman -S archiso --noconfirm
-  fi
+  check_dep mkarchiso archiso
+  check_dep tor tor
+  check_dep lxdm lxdm-gtk3
   [ -d /usr/share/archiso/configs/releng ] || die "archiso dir no found"
   cp -a /usr/share/archiso/configs/releng "$WORKDIR"
 }
@@ -52,7 +61,7 @@ editor_cmd = terminal .. " -e " .. editor
 web_browser = "midori"
 file_browser = "vifm"
 terminal_args = { " -T ", " -e " }
-net_device = "wlan0"
+net_device = "lo"
 disks = { "/home" }
 cpu_core = 1
 sound_system = "pulseaudio"
@@ -142,8 +151,10 @@ EOF
 
 add_services() {
   echo "Adding systemd services"
-  mkdir -p "$WORKDIR"/airootfs/etc/systemd/system/multi-user.target.wants
-  ln -s /usr/lib/systemd/system/lxdm.service archlive/airootfs/etc/systemd/system/display-manager.service
+  want_dir="$WORKDIR"/airootfs/etc/systemd/system/multi-user.target.wants
+  mkdir -p "$want_dir"
+  ln -s /usr/lib/systemd/system/lxdm.service "$WORKDIR"/airootfs/etc/systemd/system/display-manager.service
+  ln -s /usr/lib/systemd/system/tor.service "$want_dir"/
 }
 
 main() {
