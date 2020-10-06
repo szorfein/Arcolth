@@ -34,6 +34,7 @@ copy_release() {
   check_dep mkarchiso archiso
   check_dep tor tor
   check_dep lxdm lxdm-gtk3
+  check_dep unzip unzip
   [ -d /usr/share/archiso/configs/releng ] || die "archiso dir no found"
   cp -a /usr/share/archiso/configs/releng "$WORKDIR"
 }
@@ -42,6 +43,15 @@ create_dirs() {
   [ -d "$WORKDIR" ] || mkdir "$WORKDIR"
   [ -d "$HOME_DIR"/.config ] || mkdir -p "$HOME_DIR"/.config
   [ -d "$HOME_DIR"/.dotfiles ] || mkdir "$HOME_DIR"/.dotfiles
+  [ -d "$HOME_DIR"/images ] || mkdir "$HOME_DIR"/images
+}
+
+download_walls() {
+  [ -f /tmp/walls.zip ] || curl -s -L -o /tmp/walls.zip https://github.com/szorfein/walls/archive/main.zip
+  [ -d /tmp/walls-main ] || (cd /tmp && unzip walls.zip)
+  (cd /tmp/walls-main \
+    && cp -a lines.jpg "$HOME_DIR"/images/ \
+  )
 }
 
 download_dots() {
@@ -186,6 +196,7 @@ main() {
   cleanup
   copy_release
   create_dirs
+  download_walls
   download_dots
   add_omz
   add_archzfs
