@@ -10,6 +10,11 @@ Custom Archiso
 + `Zfs`: If need install ZFS.
 
 ## Build iso
+Fist, build a custom repository with AUR packages (~= 46M):
+
+    ./build-pkgs.sh
+
+And the iso:
 
     ./setup.sh
     cd iso

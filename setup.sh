@@ -5,6 +5,7 @@ set -o errexit -o nounset
 WORKDIR="/root/iso"
 HOME_DIR="$WORKDIR"/airootfs/etc/skel
 THEME="lines"
+PKGS=/tmp/pkgs
 
 die() { echo "[-] $1"; exit 1; }
 goodbye() { echo "\n[+] Script ended, bye"; exit 0; }
@@ -66,7 +67,7 @@ download_dots() {
     && cp -a themes "$HOME_DIR"/.dotfiles/
   )
   cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
-terminal = os.getenv("TERMINAL") or "urxvt"
+terminal = os.getenv("TERMINAL") or "xst"
 terminal_cmd = terminal .. " -e "
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
@@ -93,7 +94,7 @@ add_omz() {
 cat << EOF | tee "$HOME_DIR"/.zshrc
 export PATH=\$HOME/bin:\$PATH
 export PATH="\$PATH:\$(ruby -e 'puts Gem.user_dir')/bin"
-export TERMINAL=urxvt
+export TERMINAL=xst
 export GPG_TTY=\$(tty)
 export GPG_AGENT_INFO=""
 export ZSH=\$HOME/.oh-my-zsh
@@ -109,7 +110,12 @@ add_archzfs() {
   echo "Adding Archzfs"
   pacman_conf="$WORKDIR"/pacman.conf
   [ -f "$pacman_conf" ] || die "No pacman.conf found"
+  [ -d "$PKGS" ] || cp -a pkgs "$PKGS"
   cat << EOF | tee -a "$pacman_conf"
+[pkgs]
+SigLevel = Optional TrustAll
+Server = file:///$PKGS
+
 [archzfs]
 Server = https://archzfs.com/\$repo/\$arch
 EOF
@@ -129,7 +135,6 @@ lxdm-gtk3
 sudo
 midori
 xclip
-rxvt-unicode
 linux-headers
 # ZFS
 archzfs-linux
@@ -158,6 +163,11 @@ perl-sub-name
 perl-pod-coverage
 iptables
 tor
+# AUR
+yay
+xst
+nerd-fonts-iosevka
+ttf-material-design-icons
 EOF
 }
 
