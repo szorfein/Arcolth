@@ -4,6 +4,7 @@ set -o errexit -o nounset
 
 WORKDIR="/root/iso"
 HOME_DIR="$WORKDIR"/airootfs/etc/skel
+THEME="lines"
 
 die() { echo "[-] $1"; exit 1; }
 goodbye() { echo "\n[+] Script ended, bye"; exit 0; }
@@ -51,6 +52,7 @@ download_dots() {
     && cp -a awesomewm/.config/awesome "$HOME_DIR"/.config/ \
     && cp -a picom/.config/picom "$HOME_DIR"/.config/ \
     && cp -a .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
+    && cp -a themes/"$THEME"/{.colors,.config,.tmux,.vim} "$HOME_DIR" \
     && cp -a themes "$HOME_DIR"/.dotfiles/
   )
   cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
@@ -157,6 +159,28 @@ add_services() {
   ln -s /usr/lib/systemd/system/tor.service "$want_dir"/
 }
 
+add_user() {
+  username="archlive"
+  cat << EOF | tee -a "$WORKDIR"/airootfs/etc/passwd
+$username:x:1000:1000::/home/$username:/usr/bin/zsh
+EOF
+  # Default pass: archlive
+  cat << EOF | tee -a "$WORKDIR"/airootfs/etc/shadow
+$username:$(openssl passwd -6 "$username"):14871::::::
+EOF
+  cat << EOF | tee "$WORKDIR"/airootfs/etc/group
+root:x:0:root
+adm:x:4:$username
+wheel:x:10:$username
+uucp:x:14:$username
+$username:x:1000:
+EOF
+  cat << EOF | tee -a "$WORKDIR"/airootfs/etc/gshadow
+root:!!::root
+$username:!!::
+EOF
+}
+
 main() {
   check_permission
   cleanup
@@ -167,6 +191,7 @@ main() {
   add_archzfs
   add_dependencies
   add_services
+  add_user
 }
 
 main "$@"

@@ -1,4 +1,4 @@
-# Arcolth
+# Arcnid
 Custom Archiso
 
 ## Tools include
@@ -14,6 +14,11 @@ Custom Archiso
     ./setup.sh
     cd iso
     mkarchiso -v -o out .
+
+## Login
+Default login are:
++ User: archlive
++ Pass: archlive
 
 ## Make a bootable usb key
 
