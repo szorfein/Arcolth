@@ -20,11 +20,11 @@ And the iso:
     cd iso
     mkarchiso -v -o out .
 
+## Make a bootable usb key
+
+    sudo dd bs=4M if=/root/iso/arcolth.iso of=/dev/sdX status=progress oflag=sync
+
 ## Login
 Default login are:
 + User: archlive
 + Pass: archlive
-
-## Make a bootable usb key
-
-    sudo dd bs=4M if=/path/to/arcolth.iso of=/dev/sdX status=progress oflag=sync

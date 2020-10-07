@@ -8,7 +8,7 @@ THEME="lines"
 PKGS=/tmp/pkgs
 
 die() { echo "[-] $1"; exit 1; }
-goodbye() { echo "\n[+] Script ended, bye"; exit 0; }
+goodbye() { echo; echo "[+] Script ended, bye"; exit 0; }
 
 trap goodbye EXIT
 
@@ -73,7 +73,7 @@ editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 web_browser = "midori"
 file_browser = "vifm"
-terminal_args = { " -T ", " -e " }
+terminal_args = { " -c ", " -e " }
 net_device = "lo"
 disks = { "/home" }
 cpu_core = 1
@@ -122,8 +122,13 @@ EOF
 
   # https://github.com/archzfs/archzfs/wiki#using-the-archzfs-repository
   echo "[+] Updating keys..."
-  pacman-key -r DDF7DB817396A49B2A2723F7403BD972F75D9D76 --keyserver hkp://pool.sks-keyservers.net:80
-  pacman-key --lsign-key DDF7DB817396A49B2A2723F7403BD972F75D9D76 --keyserver hkp://pool.sks-keyservers.net:80
+  key="DDF7DB817396A49B2A2723F7403BD972F75D9D76"
+  if ! pacman-key -r "$key" --keyserver hkp://pool.sks-keyservers.net:80 ; then
+    pacman-key -r "$key" --keyserver hkp://keyserver.ubuntu.com
+  fi
+  if ! pacman-key --lsign-key "$key" --keyserver hkp://pool.sks-keyservers.net:80 ; then
+    pacman-key --lsign-key "$key" --keyserver hkp://keyserver.ubuntu.com
+  fi
   pacman -Syy
 }
 
@@ -146,7 +151,12 @@ awesome
 picom
 feh
 stow
+imagemagick
+# Xorg
 xorg-server
+xorg-xprop
+xorg-xrandr
+xorg-xrdb
 # GPU drivers
 xf86-video-fbdev
 xf86-video-vesa
@@ -154,6 +164,8 @@ xf86-video-intel
 xf86-video-amdgpu
 xf86-video-ati
 xf86-video-nouveau
+# Virtualbox
+virtualbox-guest-utils
 # Nipe
 perl-config-simple
 perl-cpan-meta-check
@@ -213,6 +225,7 @@ main() {
   add_dependencies
   add_services
   add_user
+  cp -a configs/* "$WORKDIR"/airootfs/
 }
 
 main "$@"
