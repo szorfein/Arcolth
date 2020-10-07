@@ -38,6 +38,7 @@ copy_release() {
   check_dep unzip unzip
   [ -d /usr/share/archiso/configs/releng ] || die "archiso dir no found"
   cp -a /usr/share/archiso/configs/releng "$WORKDIR"
+  sed -i 's/MODULES=()/MODULES=(i915? amdgpu? radeon? nouveau? vboxvideo? vmwgfx?)/g' "$WORKDIR"/airootfs/etc/mkinitcpio.conf
 }
 
 create_dirs() {
@@ -63,9 +64,13 @@ download_dots() {
     && cp -a awesomewm/.config/awesome "$HOME_DIR"/.config/ \
     && cp -a picom/.config/picom "$HOME_DIR"/.config/ \
     && cp -a .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
-    && cp -a themes/"$THEME"/{.colors,.config,.tmux,.vim} "$HOME_DIR" \
     && cp -a themes "$HOME_DIR"/.dotfiles/
   )
+  cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PostLogin
+#!/bin/sh
+(cd ~/.dotfiles/themes && stow $THEME -t ~)
+EOF
+  chmod 755 "$WORKDIR"/airootfs/etc/lxdm/PostLogin
   cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
 terminal = os.getenv("TERMINAL") or "xst"
 terminal_cmd = terminal .. " -e "
@@ -137,10 +142,12 @@ add_dependencies() {
 # Extra deps
 ruby
 lxdm-gtk3
+adapta-gtk-theme
 sudo
 midori
 xclip
 linux-headers
+tmux
 # ZFS
 archzfs-linux
 # Touchpad
@@ -158,11 +165,8 @@ xorg-xprop
 xorg-xrandr
 xorg-xrdb
 # GPU drivers
-xf86-video-fbdev
-xf86-video-vesa
 xf86-video-intel
 xf86-video-amdgpu
-xf86-video-ati
 xf86-video-nouveau
 # Virtualbox
 virtualbox-guest-utils
@@ -205,6 +209,8 @@ root:x:0:root
 adm:x:4:$username
 wheel:x:10:$username
 uucp:x:14:$username
+audio:x:15:$username
+video:x:16:$username
 $username:x:1000:
 EOF
   cat << EOF | tee -a "$WORKDIR"/airootfs/etc/gshadow
@@ -218,6 +224,7 @@ main() {
   cleanup
   copy_release
   create_dirs
+  cp -a configs/* "$WORKDIR"/airootfs/
   download_walls
   download_dots
   add_omz
@@ -225,7 +232,6 @@ main() {
   add_dependencies
   add_services
   add_user
-  cp -a configs/* "$WORKDIR"/airootfs/
 }
 
 main "$@"

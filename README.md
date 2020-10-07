@@ -2,11 +2,12 @@
 Custom Archiso
 
 ## Tools include
-
 + `Awesomewm`: Highly customizable/light wm
-+ `Lxdm`: display manager
++ `Lxdm`: Display manager
++ `Midori`: A lightweight web browser
 + `Nipe`: Hide your IP with TOR, proceed safely.
 + `Oh-my-zsh`
++ `Tmux`
 + `Zfs`: If need install ZFS.
 
 ## Build iso
@@ -21,6 +22,7 @@ And the iso:
     mkarchiso -v -o out .
 
 ## Make a bootable usb key
+You need a device with at least 1G of free space.
 
     sudo dd bs=4M if=/root/iso/arcolth.iso of=/dev/sdX status=progress oflag=sync
 
