@@ -48,14 +48,6 @@ create_dirs() {
   [ -d "$HOME_DIR"/images ] || mkdir "$HOME_DIR"/images
 }
 
-download_walls() {
-  [ -f /tmp/walls.zip ] || curl -s -L -o /tmp/walls.zip https://github.com/szorfein/walls/archive/main.zip
-  [ -d /tmp/walls-main ] || (cd /tmp && unzip walls.zip)
-  (cd /tmp/walls-main \
-    && cp -a lines.jpg "$HOME_DIR"/images/ \
-  )
-}
-
 download_dots() {
   echo "Adding dotfiles"
   [ -f /tmp/dotfiles.tar.gz ] || curl -s -L -o /tmp/dotfiles.tar.gz https://github.com/szorfein/dotfiles/archive/master.tar.gz
@@ -64,13 +56,15 @@ download_dots() {
     && cp -a awesomewm/.config/awesome "$HOME_DIR"/.config/ \
     && cp -a picom/.config/picom "$HOME_DIR"/.config/ \
     && cp -a .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
-    && cp -a themes "$HOME_DIR"/.dotfiles/
+    && cp -a themes "$HOME_DIR"/.dotfiles/ \
+    && ./install --dest "$HOME_DIR" --vim --images --fonts \
+    && rm -rf "$HOME_DIR"/.local/fonts/{Iosevka}* # we use the AUR pkgs
   )
-  cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PostLogin
+  cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PreLogin
 #!/bin/sh
-(cd ~/.dotfiles/themes && stow $THEME -t ~)
+[ -f ~/.config/awesome/loaded-theme.lua ] || (cd ~/.dotfiles/themes && stow $THEME -t ~)
 EOF
-  chmod 755 "$WORKDIR"/airootfs/etc/lxdm/PostLogin
+  chmod 755 "$WORKDIR"/airootfs/etc/lxdm/PreLogin
   cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
 terminal = os.getenv("TERMINAL") or "xst"
 terminal_cmd = terminal .. " -e "
@@ -115,7 +109,7 @@ add_archzfs() {
   echo "Adding Archzfs"
   pacman_conf="$WORKDIR"/pacman.conf
   [ -f "$pacman_conf" ] || die "No pacman.conf found"
-  [ -d "$PKGS" ] || cp -a pkgs "$PKGS"
+  [ -d "$PKGS" ] || die "Repo pkgs $PKGS no found, use build-pkgs.sh to generate one."
   cat << EOF | tee -a "$pacman_conf"
 [pkgs]
 SigLevel = Optional TrustAll
@@ -181,9 +175,8 @@ iptables
 tor
 # AUR
 yay
-xst
+xst-git
 nerd-fonts-iosevka
-ttf-material-design-icons
 EOF
 }
 
@@ -225,7 +218,6 @@ main() {
   copy_release
   create_dirs
   cp -a configs/* "$WORKDIR"/airootfs/
-  download_walls
   download_dots
   add_omz
   add_archzfs

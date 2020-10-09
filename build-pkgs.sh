@@ -63,9 +63,8 @@ main() {
   cleanup
   check_permission
   aur yay
-  aur xst
+  aur xst-git
   aur nerd-fonts-iosevka
-  aur ttf-material-design-icons
   create_repo
 }
 
