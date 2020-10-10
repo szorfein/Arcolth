@@ -5,6 +5,7 @@ Custom Archiso
 + `Awesomewm`: Highly customizable/light wm.
 + `Lxdm`: Display manager.
 + `Midori`: A lightweight web browser.
++ `Mpd`: Music Player Daemon.
 + `Nipe`: Hide your IP with TOR, proceed safely.
 + `Oh-my-zsh`
 + `Tmux`: Terminal multiplexer.

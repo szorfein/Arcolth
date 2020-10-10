@@ -36,6 +36,7 @@ copy_release() {
   check_dep tor tor
   check_dep lxdm lxdm-gtk3
   check_dep unzip unzip
+  check_dep mpd mpd
   [ -d /usr/share/archiso/configs/releng ] || die "archiso dir no found"
   cp -a /usr/share/archiso/configs/releng "$WORKDIR"
   sed -i 's/MODULES=()/MODULES=(i915? amdgpu? radeon? nouveau? vboxvideo? vmwgfx?)/g' "$WORKDIR"/airootfs/etc/mkinitcpio.conf
@@ -46,6 +47,10 @@ create_dirs() {
   [ -d "$HOME_DIR"/.config ] || mkdir -p "$HOME_DIR"/.config
   [ -d "$HOME_DIR"/.dotfiles ] || mkdir "$HOME_DIR"/.dotfiles
   [ -d "$HOME_DIR"/images ] || mkdir "$HOME_DIR"/images
+  cp -a configs/* "$WORKDIR"/airootfs/
+  chmod -R 740 "$WORKDIR"/airootfs/etc/sudoers.d
+  chown -R mpd:mpd "$WORKDIR"/airootfs/var/lib/mpd
+  chmod -R 744 "$WORKDIR"/airootfs/var/lib/mpd
 }
 
 download_dots() {
@@ -106,6 +111,7 @@ ZSH_THEME="random"
 DISABLE_UPDATE_PROMPT=true
 DISABLE_AUTO_UPDATE=true
 source \$ZSH/oh-my-zsh.sh
+alias vifm=vifmrun
 EOF
 }
 
@@ -220,7 +226,7 @@ wheel:x:10:$username
 uucp:x:14:$username
 audio:x:15:$username
 video:x:16:$username
-$username:x:1000:
+$username:x:1000:mpd
 EOF
   cat << EOF | tee -a "$WORKDIR"/airootfs/etc/gshadow
 root:!!::root
@@ -233,7 +239,6 @@ main() {
   cleanup
   copy_release
   create_dirs
-  cp -a configs/* "$WORKDIR"/airootfs/
   download_dots
   add_omz
   add_archzfs
