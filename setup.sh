@@ -56,6 +56,10 @@ download_dots() {
     && cp -a awesomewm/.config/awesome "$HOME_DIR"/.config/ \
     && cp -a picom/.config/picom "$HOME_DIR"/.config/ \
     && cp -a .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
+    && cp -a vim/{.vim,.vimrc} "$HOME_DIR" \
+    && cp -a ncmpcpp/.ncmpcpp "$HOME_DIR" \
+    && cp -a tmux/.tmux.conf "$HOME_DIR" \
+    && cp -a vifm/{.config,bin} "$HOME_DIR" \
     && cp -a themes "$HOME_DIR"/.dotfiles/ \
     && ./install --dest "$HOME_DIR" --vim --images --fonts \
     && rm -rf "$HOME_DIR"/.local/fonts/{Iosevka}* # we use the AUR pkgs
@@ -142,6 +146,13 @@ midori
 xclip
 linux-headers
 tmux
+vifm
+scrot
+light
+# Music
+mpd
+ncmpcpp
+mpc
 # ZFS
 archzfs-linux
 # Touchpad
@@ -177,6 +188,8 @@ tor
 yay
 xst-git
 nerd-fonts-iosevka
+cava
+python-ueberzug
 EOF
 }
 
@@ -186,6 +199,9 @@ add_services() {
   mkdir -p "$want_dir"
   ln -s /usr/lib/systemd/system/lxdm.service "$WORKDIR"/airootfs/etc/systemd/system/display-manager.service
   ln -s /usr/lib/systemd/system/tor.service "$want_dir"/
+  # mpd
+  ln -s /usr/lib/systemd/system/mpd.service "$want_dir"/
+  ln -s /usr/lib/systemd/system/mpd.socket "$WORKDIR"/airootfs/etc/systemd/system/sockets.target.wants/mpd.socket
 }
 
 add_user() {

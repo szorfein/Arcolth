@@ -65,6 +65,8 @@ main() {
   aur yay
   aur xst-git
   aur nerd-fonts-iosevka
+  aur cava
+  aur python-ueberzug
   create_repo
 }
 
