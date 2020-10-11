@@ -49,8 +49,8 @@ create_dirs() {
   [ -d "$HOME_DIR"/images ] || mkdir "$HOME_DIR"/images
   cp -a configs/* "$WORKDIR"/airootfs/
   chmod -R 740 "$WORKDIR"/airootfs/etc/sudoers.d
-  chown -R mpd:mpd "$WORKDIR"/airootfs/var/lib/mpd
-  chmod -R 744 "$WORKDIR"/airootfs/var/lib/mpd
+  #chown -R mpd:mpd "$WORKDIR"/airootfs/var/lib/mpd
+  #chmod -R 744 "$WORKDIR"/airootfs/var/lib/mpd
 }
 
 download_dots() {
@@ -69,6 +69,9 @@ download_dots() {
     && ./install --dest "$HOME_DIR" --vim --images --fonts \
     && rm -rf "$HOME_DIR"/.local/fonts/{Iosevka}* # we use the AUR pkgs
   )
+  cat << EOF | tee -a "$HOME_DIR"/.config/awesome/module/autostart.lua
+app.run_once({'mpd &'})
+EOF
   cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PreLogin
 #!/bin/sh
 [ -f ~/.config/awesome/loaded-theme.lua ] || (cd ~/.dotfiles/themes && stow $THEME -t ~)
@@ -226,7 +229,7 @@ wheel:x:10:$username
 uucp:x:14:$username
 audio:x:15:$username
 video:x:16:$username
-$username:x:1000:mpd
+$username:x:1000
 EOF
   cat << EOF | tee -a "$WORKDIR"/airootfs/etc/gshadow
 root:!!::root
