@@ -49,8 +49,6 @@ create_dirs() {
   [ -d "$HOME_DIR"/images ] || mkdir "$HOME_DIR"/images
   cp -a configs/* "$WORKDIR"/airootfs/
   chmod -R 740 "$WORKDIR"/airootfs/etc/sudoers.d
-  #chown -R mpd:mpd "$WORKDIR"/airootfs/var/lib/mpd
-  #chmod -R 744 "$WORKDIR"/airootfs/var/lib/mpd
 }
 
 download_dots() {
@@ -66,11 +64,11 @@ download_dots() {
     && cp -a tmux/.tmux.conf "$HOME_DIR" \
     && cp -a vifm/{.config,bin} "$HOME_DIR" \
     && cp -a themes "$HOME_DIR"/.dotfiles/ \
-    && ./install --dest "$HOME_DIR" --vim --images --fonts \
+    && ./install --dest "$HOME_DIR" --vim --images --fonts --vimplugins \
     && rm -rf "$HOME_DIR"/.local/fonts/{Iosevka}* # we use the AUR pkgs
   )
   cat << EOF | tee -a "$HOME_DIR"/.config/awesome/module/autostart.lua
-app.run_once({'mpd &'})
+app.run_once({'systemctl --user start mpd'})
 EOF
   cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PreLogin
 #!/bin/sh
@@ -208,9 +206,6 @@ add_services() {
   mkdir -p "$want_dir"
   ln -s /usr/lib/systemd/system/lxdm.service "$WORKDIR"/airootfs/etc/systemd/system/display-manager.service
   ln -s /usr/lib/systemd/system/tor.service "$want_dir"/
-  # mpd
-  ln -s /usr/lib/systemd/system/mpd.service "$want_dir"/
-  ln -s /usr/lib/systemd/system/mpd.socket "$WORKDIR"/airootfs/etc/systemd/system/sockets.target.wants/mpd.socket
 }
 
 add_user() {
