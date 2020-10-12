@@ -63,6 +63,7 @@ download_dots() {
     && cp -a ncmpcpp/.ncmpcpp "$HOME_DIR" \
     && cp -a tmux/.tmux.conf "$HOME_DIR" \
     && cp -a vifm/{.config,bin} "$HOME_DIR" \
+    && cp -a audio/pulse-generic/bin/volume.sh "$HOME_DIR"/bin/ \
     && cp -a themes "$HOME_DIR"/.dotfiles/ \
     && ./install --dest "$HOME_DIR" --vim --images --fonts --vimplugins \
     && rm -rf "$HOME_DIR"/.local/fonts/{Iosevka}* # we use the AUR pkgs
@@ -156,6 +157,9 @@ tmux
 vifm
 scrot
 light
+# Audio
+pulseaudio
+pulseaudio-alsa
 # Music
 mpd
 ncmpcpp
@@ -230,6 +234,7 @@ EOF
 root:!!::root
 $username:!!::
 EOF
+  chown -R "$username":"$username" "$HOME_DIR"
 }
 
 main() {
