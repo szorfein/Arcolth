@@ -234,7 +234,9 @@ EOF
 root:!!::root
 $username:!!::
 EOF
-  chown -R "$username":"$username" "$HOME_DIR"
+ cat << EOF | tee -a "$WORKDIR"/airootfs/root/customize_airootfs.sh
+chown -R $username:$username /home/$username
+EOF
 }
 
 main() {
