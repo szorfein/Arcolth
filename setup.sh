@@ -71,11 +71,11 @@ download_dots() {
   cat << EOF | tee -a "$HOME_DIR"/.config/awesome/module/autostart.lua
 app.run_once({'systemctl --user start mpd'})
 EOF
-  cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PreLogin
+  cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PostLogin
 #!/bin/sh
 [ -f ~/.config/awesome/loaded-theme.lua ] || (cd ~/.dotfiles/themes && stow $THEME -t ~)
 EOF
-  chmod 755 "$WORKDIR"/airootfs/etc/lxdm/PreLogin
+  chmod 755 "$WORKDIR"/airootfs/etc/lxdm/PostLogin
   cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
 terminal = os.getenv("TERMINAL") or "xst"
 terminal_cmd = terminal .. " -e "
@@ -147,6 +147,7 @@ add_dependencies() {
   cat << EOF | tee -a "$WORKDIR"/packages.x86_64
 # Extra deps
 ruby
+gcc
 lxdm-gtk3
 adapta-gtk-theme
 sudo
