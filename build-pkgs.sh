@@ -10,6 +10,8 @@ die() { echo "[-] $1"; exit 1; }
 cleanup() {
   [ -d "$WORKDIR" ] && rm -rf "$WORKDIR"
   [ -d "$DEST" ] && rm -rf "$DEST"
+  [ -d "$WORKDIR" ] || mkdir -p "$WORKDIR"
+  [ -d "$DEST" ] || mkdir -p "$DEST"
 }
 
 check_permission() {
@@ -31,10 +33,11 @@ aur() {
 }
 
 gen_packages() {
-  (cd ./packages \
+  cp -a packages/lxdm-theme-arcnid "$WORKDIR"/
+  (cd "$WORKDIR" \
     && cd lxdm-theme-arcnid \
-    && makepkg --noconfirm -sC \
-    && cp "$1"-*.pkg.tar.zst "$DEST"/
+    && makepkg --noconfirm -s \
+    && cp lxdm-theme-arcnid-*.pkg.tar.zst "$DEST"/
   )
 }
 
