@@ -1,0 +1,13 @@
+pkgname=lxdm-theme-arcnid
+pkgver=1.0
+pkgrel=1
+pkgdesc="A lxdm theme for arcnid."
+arch=('any')
+license=('GPL')
+provides=($pkgname)
+conflicts=($pkgname)
+depends=('lxdm-gtk3' 'adapta-gtk-theme')
+
+package() {
+  install -D -m644 arcnid/* -t $pkgdir/usr/share/lxdm/themes/arcnid
+}

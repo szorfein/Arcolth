@@ -201,6 +201,8 @@ xst-git
 nerd-fonts-iosevka
 cava
 python-ueberzug
+# Custom pkgs
+lxdm-theme-arcnid
 EOF
 }
 
