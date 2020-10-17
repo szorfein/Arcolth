@@ -203,7 +203,7 @@ nerd-fonts-iosevka
 cava
 python-ueberzug
 # Custom pkgs
-lxdm-theme-arcnid
+lxdm-theme-archaeidae
 EOF
 }
 

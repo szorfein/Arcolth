@@ -33,11 +33,11 @@ aur() {
 }
 
 gen_packages() {
-  cp -a packages/lxdm-theme-arcnid "$WORKDIR"/
+  cp -a packages/lxdm-theme-archaeidae "$WORKDIR"/
   (cd "$WORKDIR" \
-    && cd lxdm-theme-arcnid \
+    && cd lxdm-theme-archaeidae \
     && makepkg --noconfirm -s \
-    && cp lxdm-theme-arcnid-*.pkg.tar.zst "$DEST"/
+    && cp lxdm-theme-archaeidae-*.pkg.tar.zst "$DEST"/
   )
 }
 

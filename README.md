@@ -1,4 +1,4 @@
-# Arcnid
+# Archaeidae
 Custom Archiso
 
 ## Tools include
@@ -25,7 +25,7 @@ And the iso:
 ## Make a bootable usb key
 You need a device with at least 2G of free space.
 
-    sudo dd bs=4M if=/root/iso/arcolth.iso of=/dev/sdX status=progress oflag=sync
+    sudo dd bs=4M if=/root/iso/archimg.iso of=/dev/sdX status=progress oflag=sync
 
 ## Login
 Default login are:
