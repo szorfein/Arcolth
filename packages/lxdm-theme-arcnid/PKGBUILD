@@ -9,5 +9,5 @@ conflicts=($pkgname)
 depends=('lxdm-gtk3' 'adapta-gtk-theme')
 
 package() {
-  install -D -m644 arcnid/* -t $pkgdir/usr/share/lxdm/themes/arcnid
+  install -D -m644 arcnid/* -t $pkgdir/usr/share/lxdm/themes/Arcnid
 }

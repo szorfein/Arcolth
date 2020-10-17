@@ -149,7 +149,7 @@ add_dependencies() {
 ruby
 gcc
 lxdm-gtk3
-adapta-gtk-theme
+materia-gtk-theme
 sudo
 midori
 xclip
