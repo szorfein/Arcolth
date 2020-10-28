@@ -1,14 +1,14 @@
 # Archaeidae
-Custom Archiso
+Custom Archiso (not yet) focus on privacy.
 
 ## Tools include
 + `Awesomewm`: Highly customizable/light wm.
 + `Lxdm`: Display manager.
-+ `Midori`: A lightweight web browser.
 + `Mpd`: Music Player Daemon.
 + `Nipe`: Hide your IP with TOR, proceed safely.
 + `Oh-my-zsh`
 + `Tmux`: Terminal multiplexer.
++ `Tor-Browser`: A web browser focus on privacy.
 + `Zfs`: If need install ZFS.
 
 ## Build iso

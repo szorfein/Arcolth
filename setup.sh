@@ -81,7 +81,7 @@ terminal = os.getenv("TERMINAL") or "xst"
 terminal_cmd = terminal .. " -e "
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
-web_browser = "midori"
+web_browser = "tor-browser"
 file_browser = "vifm"
 terminal_args = { " -c ", " -e " }
 net_device = "lo"
@@ -151,7 +151,6 @@ gcc
 lxdm-gtk3
 materia-gtk-theme
 sudo
-midori
 xclip
 linux-headers
 tmux
@@ -202,6 +201,7 @@ xst-git
 nerd-fonts-iosevka
 cava
 python-ueberzug
+tor-browser
 # Custom pkgs
 lxdm-theme-archaeidae
 EOF

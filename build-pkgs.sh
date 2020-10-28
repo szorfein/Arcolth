@@ -58,6 +58,7 @@ main() {
   aur nerd-fonts-iosevka
   aur cava
   aur python-ueberzug
+  aur tor-browser
   gen_packages
   create_repo
 }
