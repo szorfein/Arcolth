@@ -13,15 +13,16 @@ goodbye() { echo; echo "[+] Script ended, bye"; exit 0; }
 trap goodbye EXIT
 
 check_permission() {
-  myid=$(id -u)
-  [ "$myid" -eq 0 ] || die "Permission error, you need to start this script as root."
+  if [ "$(id -u)" -ne 0 ] ; then
+    die "Permission error, you need to start this script as root."
+  fi
 }
 
 cleanup() {
-  [ -d "$WORKDIR" ] && {
+  if [ -d "$WORKDIR" ] ; then
     echo "Clean older $WORKDIR"
     rm -rf "$WORKDIR"
-  }
+  fi
 }
 
 check_dep() {
@@ -135,10 +136,11 @@ EOF
   echo "[+] Updating keys..."
   key="DDF7DB817396A49B2A2723F7403BD972F75D9D76"
   if ! pacman-key -r "$key" --keyserver hkp://pool.sks-keyservers.net:80 ; then
-    pacman-key -r "$key" --keyserver hkp://keyserver.ubuntu.com
+    echo "importing manually"
   fi
   if ! pacman-key --lsign-key "$key" --keyserver hkp://pool.sks-keyservers.net:80 ; then
-    pacman-key --lsign-key "$key" --keyserver hkp://keyserver.ubuntu.com
+    curl -o key.gpg -L https://archzfs.com/archzfs.gpg
+    pacman-key -a key.gpg
   fi
   pacman -Syy
 }

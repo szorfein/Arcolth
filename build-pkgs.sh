@@ -15,8 +15,9 @@ cleanup() {
 }
 
 check_permission() {
-  myid=$(id -u)
-  [ "$myid" -ne 0 ] || die "Permission too high, use a normal user"
+  if [ "$(id -u)" -ne 0 ] ; then
+    die "Permission too high, use a normal user"
+  fi
 }
 
 aur() {
@@ -30,6 +31,11 @@ aur() {
   )
   rm -rf "$WORKDIR/$1"
   echo "Done with $1"
+}
+
+tor_key() {
+  # https://support.torproject.org/tbb/how-to-verify-signature/
+  curl -s https://openpgpkey.torproject.org/.well-known/openpgpkey/torproject.org/hu/kounek7zrdx745qydx6p59t9mqjpuhdf | gpg --import -
 }
 
 gen_packages() {
@@ -58,6 +64,7 @@ main() {
   aur nerd-fonts-iosevka
   aur cava
   aur python-ueberzug
+  tor_key
   aur tor-browser
   gen_packages
   create_repo
