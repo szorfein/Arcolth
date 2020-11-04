@@ -15,7 +15,7 @@ cleanup() {
 }
 
 check_permission() {
-  if [ "$(id -u)" -ne 0 ] ; then
+  if [ "$(id -u)" -eq 0 ] ; then
     die "Permission too high, use a normal user"
   fi
 }

@@ -5,11 +5,10 @@ Custom Archiso (not yet) focus on privacy.
 + `Awesomewm`: Highly customizable/light wm.
 + `Lxdm`: Display manager.
 + `Mpd`: Music Player Daemon.
-+ `Nipe`: Hide your IP with TOR, proceed safely.
 + `Oh-my-zsh`
 + `Tmux`: Terminal multiplexer.
 + `Tor-Browser`: A web browser focus on privacy.
-+ `Zfs`: If need install ZFS.
++ `ZFS`: If need to install ZFS.
 
 ## Build iso
 Fist, build a custom repository with AUR packages (~= 46M):
