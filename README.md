@@ -1,5 +1,9 @@
 # Archaeidae
-Custom Archiso (not yet) focus on privacy.
+Custom Archiso focus on privacy.
+
++ Spoof MAC address for wifi card.
++ Generic hostname set to 'host'.
++ Timezone set to UTC.
 
 ## Tools include
 + `Awesomewm`: Highly customizable/light wm.
@@ -9,9 +13,10 @@ Custom Archiso (not yet) focus on privacy.
 + `Tmux`: Terminal multiplexer.
 + `Tor-Browser`: A web browser focus on privacy.
 + `ZFS`: If need to install ZFS.
++ `Ruby`
 
 ## Build iso
-Fist, build a custom repository with AUR packages (~= 46M):
+Fist, build a custom repository with AUR and custom packages (~= 46M):
 
     $ ./build-pkgs.sh
 
@@ -22,7 +27,7 @@ And the iso:
     # mkarchiso -v -o out .
 
 ## Make a bootable usb key
-You need a device with at least 2G of free space.
+You need a device with at least 1.4G of free space.
 
     sudo dd bs=4M if=/root/iso/archimg.iso of=/dev/sdX status=progress oflag=sync
 
@@ -30,3 +35,6 @@ You need a device with at least 2G of free space.
 Default login are:
 + User: archlive
 + Pass: archlive
+
+## Links
++ https://gitlab.tails.boum.org/tails/tails/-/tree/master/config/chroot_local-includes
