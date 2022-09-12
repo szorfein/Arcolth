@@ -54,11 +54,10 @@ create_dirs() {
 
 download_dots() {
   echo "Adding dotfiles"
-  [ -f /tmp/dotfiles.tar.gz ] || curl -s -L -o /tmp/dotfiles.tar.gz https://github.com/szorfein/dotfiles/archive/master.tar.gz
+  [ -f /tmp/dotfiles.tar.gz ] || curl -s -L -o /tmp/dotfiles.tar.gz https://github.com/szorfein/dotfiles/archive/main.tar.gz
   [ -d /tmp/dotfiles-master ] || (cd /tmp && tar xf dotfiles.tar.gz)
-  (cd /tmp/dotfiles-master \
+  (cd /tmp/dotfiles-main \
     && cp -a awesomewm/.config/awesome "$HOME_DIR"/.config/ \
-    && cp -a picom/.config/picom "$HOME_DIR"/.config/ \
     && cp -a .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
     && cp -a vim/{.vim,.vimrc} "$HOME_DIR" \
     && cp -a ncmpcpp/.ncmpcpp "$HOME_DIR" \
@@ -66,7 +65,7 @@ download_dots() {
     && cp -a vifm/{.config,bin} "$HOME_DIR" \
     && cp -a audio/pulse-generic/bin/volume.sh "$HOME_DIR"/bin/ \
     && cp -a themes "$HOME_DIR"/.dotfiles/ \
-    && ./install --dest "$HOME_DIR" --vim --images --fonts --vimplugins \
+    && ./install --dest "$HOME_DIR" --vim --images --fonts \
     && rm -rf "$HOME_DIR"/.local/fonts/{Iosevka}* # we use the AUR pkgs
   )
   cat << EOF | tee -a "$HOME_DIR"/.config/awesome/module/autostart.lua
@@ -86,7 +85,7 @@ web_browser = "tor-browser"
 file_browser = "vifm"
 terminal_args = { " -c ", " -e " }
 net_device = "lo"
-disks = { "/home" }
+disks = { "/" }
 cpu_core = 1
 sound_system = "pulseaudio"
 password = "awesome"
@@ -135,12 +134,14 @@ EOF
   # https://github.com/archzfs/archzfs/wiki#using-the-archzfs-repository
   echo "[+] Updating keys..."
   key="DDF7DB817396A49B2A2723F7403BD972F75D9D76"
-  if ! pacman-key -r "$key" --keyserver hkp://pool.sks-keyservers.net:80 ; then
+  if ! pacman-key -r "$key" ; then
     echo "importing manually"
   fi
-  if ! pacman-key --lsign-key "$key" --keyserver hkp://pool.sks-keyservers.net:80 ; then
+  if ! pacman-key --lsign-key "$key" ; then
     curl -o key.gpg -L https://archzfs.com/archzfs.gpg
     pacman-key -a key.gpg
+    # https://github.com/archzfs/archzfs/issues/342
+    pacman-key --lsign-key "$key"
   fi
   pacman -Syy
 }
@@ -186,8 +187,6 @@ xorg-xrdb
 xf86-video-intel
 xf86-video-amdgpu
 xf86-video-nouveau
-# Virtualbox
-virtualbox-guest-utils
 # Nipe
 perl-config-simple
 perl-cpan-meta-check
@@ -200,7 +199,7 @@ tor
 # AUR
 yay
 xst-git
-nerd-fonts-iosevka
+ttf-iosevka-nerd
 cava
 python-ueberzug
 tor-browser

@@ -61,7 +61,6 @@ main() {
   check_permission
   aur yay
   aur xst-git
-  aur nerd-fonts-iosevka
   aur cava
   aur python-ueberzug
   tor_key
