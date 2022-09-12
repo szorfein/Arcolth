@@ -208,6 +208,7 @@ lxdm-theme-archaeidae
 ruby-nomansland
 ruby-tty-which
 ruby-interfacez
+ruby-rainbow
 EOF
 }
 

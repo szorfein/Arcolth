@@ -52,6 +52,7 @@ gen_packages() {
   build_src "ruby-nomansland"
   build_src "ruby-tty-which"
   build_src "ruby-interfacez"
+  build_src "ruby-rainbow"
 }
 
 create_repo() {
