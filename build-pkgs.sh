@@ -51,6 +51,7 @@ gen_packages() {
   build_src "lxdm-theme-archaeidae"
   build_src "ruby-nomansland"
   build_src "ruby-tty-which"
+  build_src "ruby-interfacez"
 }
 
 create_repo() {
