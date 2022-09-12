@@ -50,6 +50,7 @@ gen_packages() {
   cp -a packages/* "$WORKDIR"/
   build_src "lxdm-theme-archaeidae"
   build_src "ruby-nomansland"
+  build_src "ruby-tty-which"
 }
 
 create_repo() {
