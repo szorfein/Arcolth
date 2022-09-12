@@ -209,6 +209,7 @@ ruby-nomansland
 ruby-tty-which
 ruby-interfacez
 ruby-rainbow
+ruby-spior
 EOF
 }
 

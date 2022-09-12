@@ -53,6 +53,7 @@ gen_packages() {
   build_src "ruby-tty-which"
   build_src "ruby-interfacez"
   build_src "ruby-rainbow"
+  build_src "ruby-spior"
 }
 
 create_repo() {
