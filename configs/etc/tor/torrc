@@ -1,0 +1,22 @@
+User tor
+
+Log notice syslog
+
+DataDirectory /var/lib/tor
+
+## Default SocksPort
+SocksPort 127.0.0.1:9050 IsolateDestAddr IsolateDestPort
+
+## Torified DNS
+DNSPort 9061
+AutomapHostsOnResolve 1
+AutomapHostsSuffixes .exit,.onion
+
+## Transparent proxy
+TransPort 127.0.0.1:9040 IsolateClientAddr IsolateClientProtocol IsolateDestAddr IsolateDestPort
+
+## Misc
+AvoidDiskWrites 1
+
+## Spior
+VirtualAddrNetworkIpv4 10.192.0.0/10
