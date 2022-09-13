@@ -243,6 +243,10 @@ chown -R $username:$username /home/$username
 EOF
 }
 
+privacy() {
+  ln -sf /usr/share/zoneinfo/UTC "$WORKDIR"/airootfs/etc/localtime
+}
+
 main() {
   check_permission
   cleanup
@@ -254,6 +258,7 @@ main() {
   add_dependencies
   add_services
   add_user
+  privacy
 }
 
 main "$@"
