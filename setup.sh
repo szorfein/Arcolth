@@ -75,7 +75,7 @@ EOF
 #!/bin/sh
 [ -f ~/.config/awesome/loaded-theme.lua ] || (cd ~/.dotfiles/themes && stow $THEME -t ~)
 EOF
-  chmod 755 "$WORKDIR"/airootfs/etc/lxdm/PostLogin
+  chmod 777 "$WORKDIR"/airootfs/etc/lxdm/PostLogin
   cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
 terminal = os.getenv("TERMINAL") or "xst"
 terminal_cmd = terminal .. " -e "
