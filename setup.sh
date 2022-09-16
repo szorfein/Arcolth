@@ -189,6 +189,7 @@ xf86-video-amdgpu
 xf86-video-nouveau
 iptables
 tor
+macchanger
 # AUR
 yay
 xst-git
@@ -232,7 +233,7 @@ EOF
 root:!!::root
 $username:!!::
 EOF
- cat << EOF | tee -a "$WORKDIR"/airootfs/root/customize_airootfs.sh
+  cat << EOF | tee -a "$WORKDIR"/airootfs/root/customize_airootfs.sh
 chown -R $username:$username /home/$username
 EOF
 }

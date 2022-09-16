@@ -1,0 +1,8 @@
+# Note: ATTR{type}=="1" means ethernet (ARPHDR_ETHER, see Linux'
+# sources, beginning of include/linux/if_arp.h)
+
+# Perform MAC spoofing
+SUBSYSTEM=="net", ACTION=="add", ATTR{type}=="1", RUN+="/usr/bin/macchanger -e $name"
+SUBSYSTEM=="net", ACTION=="add", ATTR{type}=="1", GOTO="mac_spoof_end"
+
+LABEL="mac_spoof_end"
