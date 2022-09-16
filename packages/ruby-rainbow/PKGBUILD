@@ -2,11 +2,11 @@
 
 _gemname_="rainbow"
 pkgname="ruby-${_gemname_}"
-pkgver=3.0.0
+pkgver=3.1.1
 pkgrel=1
 pkgdesc="Colorize printed text on ANSI terminals"
 arch=("x86_64")
-url="https://github.com/picatz/interfacez"
+url="http://github.com/sickill/rainbow"
 license=("Ruby" "MIT")
 depends=("ruby")
 makedepends=("ruby")
@@ -21,4 +21,4 @@ package() {
 	rm "${pkgdir}/${_gemdir_}/cache/${_gemname_}-${pkgver}.gem"
 }
 
-sha256sums=('13ce4ffc3c94fb7a842117ecabdcdc5ff7fa27bec15ea44137b9f9abe575622d')
+sha256sums=('039491aa3a89f42efa1d6dec2fc4e62ede96eb6acd95e52f1ad581182b79bc6a')

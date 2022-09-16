@@ -2,7 +2,7 @@
 
 _gemname_="nomansland"
 pkgname="ruby-${_gemname_}"
-pkgver=0.0.3
+pkgver=0.0.5
 pkgrel=1
 pkgdesc="A simple gem that allows you to search where you fell."
 arch=("x86_64")
@@ -21,4 +21,4 @@ package() {
 	rm "${pkgdir}/${_gemdir_}/cache/${_gemname_}-${pkgver}.gem"
 }
 
-sha256sums=('31bf97690ea3102b0bacb3ad94af89a30b113685723dc16c6e3e102682cb35b5')
+sha256sums=('2278d56607d1a0cf58dc0083b2cc15449c817fc07791b0f70f36a3823822e7b4')

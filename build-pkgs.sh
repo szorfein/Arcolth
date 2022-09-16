@@ -41,7 +41,7 @@ tor_key() {
 build_src() {
   (cd "$WORKDIR" \
     && cd "$1" \
-    && makepkg --noconfirm -s \
+    && makepkg --noconfirm -s -d \
     && cp "$1"-*.pkg.tar.zst "$DEST"/
   )
 }

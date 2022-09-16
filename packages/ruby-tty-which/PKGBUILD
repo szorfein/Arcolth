@@ -2,7 +2,7 @@
 
 _gemname_="tty-which"
 pkgname="ruby-${_gemname_}"
-pkgver=0.4.2
+pkgver=0.5.0
 pkgrel=1
 pkgdesc="Platform independent implementation of Unix which command."
 arch=("x86_64")
@@ -21,4 +21,4 @@ package() {
 	rm "${pkgdir}/${_gemdir_}/cache/${_gemname_}-${pkgver}.gem"
 }
 
-sha256sums=('0ac45f416555041882c632602aeb733379fec08b08a3123d92e78283741823ce')
+sha256sums=('5824055f0d6744c97e7c4426544f01d519c40d1806ef2ef47d9854477993f466')

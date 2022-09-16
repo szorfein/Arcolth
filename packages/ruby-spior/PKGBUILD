@@ -2,9 +2,9 @@
 
 _gemname_="spior"
 pkgname="ruby-${_gemname_}"
-pkgver=0.1.6
+pkgver=0.2.8
 pkgrel=1
-pkgdesc="A tool to make TOR your default gateway"
+pkgdesc="A tool to make Tor your default gateway"
 arch=("x86_64")
 url="https://github.com/szorfein/spior"
 license=("Ruby" "MIT")
@@ -21,4 +21,4 @@ package() {
 	rm "${pkgdir}/${_gemdir_}/cache/${_gemname_}-${pkgver}.gem"
 }
 
-sha256sums=('b740de25d3c0b4b9916f95e85b1d089349a4a391da422784db8f749535e89882')
+sha256sums=('5b63b0884b48a656477297ecb053fe8c2c3a816ec1631a7f9567790098b612a9')
