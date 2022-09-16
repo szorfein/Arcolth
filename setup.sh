@@ -199,6 +199,11 @@ python-ueberzug
 tor-browser
 # Custom pkgs
 lxdm-theme-archaeidae
+ruby-nomansland
+ruby-tty-which
+ruby-interfacez
+ruby-rainbow
+ruby-spior
 EOF
 }
 

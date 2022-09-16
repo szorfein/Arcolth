@@ -1,0 +1,24 @@
+# Maintainer: Szorfein < szorfein@protonmail.com>
+
+_gemname_="spior"
+pkgname="ruby-${_gemname_}"
+pkgver=0.2.8
+pkgrel=1
+pkgdesc="A tool to make Tor your default gateway"
+arch=("x86_64")
+url="https://github.com/szorfein/spior"
+license=("Ruby" "MIT")
+depends=("ruby" "tor" "iptables")
+makedepends=("ruby" "ruby-nomansland" "ruby-interfacez" "ruby-rainbow" "ruby-tty-which")
+options=(!emptydirs)
+source=("https://rubygems.org/downloads/${_gemname_}-${pkgver}.gem")
+
+package() {
+	local _gemdir_="$(ruby -e'puts Gem.default_dir')"
+
+	gem install --ignore-dependencies --no-user-install -i "${pkgdir}/${_gemdir_}" -n "${pkgdir}/usr/bin" "${_gemname_}-${pkgver}.gem"
+
+	rm "${pkgdir}/${_gemdir_}/cache/${_gemname_}-${pkgver}.gem"
+}
+
+sha256sums=('5b63b0884b48a656477297ecb053fe8c2c3a816ec1631a7f9567790098b612a9')
