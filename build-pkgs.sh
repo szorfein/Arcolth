@@ -71,7 +71,6 @@ main() {
   aur yay
   aur xst-git
   aur cava
-  aur python-ueberzug
   tor_key
   aur tor-browser
   gen_packages

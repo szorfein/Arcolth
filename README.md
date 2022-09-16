@@ -11,7 +11,7 @@ Custom Archiso (not yet) focus on privacy.
 + `ZFS`: If need to install ZFS.
 
 ## Build iso
-Fist, build a custom repository with AUR packages (~= 46M):
+Fist, build a custom repository with AUR packages (~= 111M):
 
     $ ./build-pkgs.sh
 
