@@ -2,7 +2,7 @@
 
 set -o errexit -o nounset
 
-WORKDIR="/root/iso"
+WORKDIR="/root/iso-$(date +%Y.%m)"
 HOME_DIR="$WORKDIR"/airootfs/etc/skel
 THEME="lines"
 PKGS=/tmp/pkgs
@@ -75,7 +75,7 @@ EOF
 #!/bin/sh
 [ -f ~/.config/awesome/loaded-theme.lua ] || (cd ~/.dotfiles/themes && stow $THEME -t ~)
 EOF
-  chmod 755 "$WORKDIR"/airootfs/etc/lxdm/PostLogin
+  chmod 777 "$WORKDIR"/airootfs/etc/lxdm/PostLogin
   cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
 terminal = os.getenv("TERMINAL") or "xst"
 terminal_cmd = terminal .. " -e "
@@ -187,15 +187,9 @@ xorg-xrdb
 xf86-video-intel
 xf86-video-amdgpu
 xf86-video-nouveau
-# Nipe
-perl-config-simple
-perl-cpan-meta-check
-perl-yaml
-perl-capture-tiny
-perl-sub-name
-perl-pod-coverage
 iptables
 tor
+macchanger
 # AUR
 yay
 xst-git
@@ -214,6 +208,7 @@ add_services() {
   mkdir -p "$want_dir"
   ln -s /usr/lib/systemd/system/lxdm.service "$WORKDIR"/airootfs/etc/systemd/system/display-manager.service
   ln -s /usr/lib/systemd/system/tor.service "$want_dir"/
+  ln -s /usr/lib/systemd/system/iptables.service "$want_dir"/
 }
 
 add_user() {
@@ -238,9 +233,18 @@ EOF
 root:!!::root
 $username:!!::
 EOF
- cat << EOF | tee -a "$WORKDIR"/airootfs/root/customize_airootfs.sh
+  cat << EOF | tee -a "$WORKDIR"/airootfs/root/customize_airootfs.sh
 chown -R $username:$username /home/$username
 EOF
+}
+
+privacy() {
+  echo "[+] Setting privacy..."
+  ln -sf /usr/share/zoneinfo/UTC "$WORKDIR"/airootfs/etc/localtime
+  [ -d "$WORKDIR"/airootfs/etc/iptables ] || \
+    mkdir -p "$WORKDIR"/airootfs/etc/iptables
+
+  iptables-save -f "$WORKDIR"/airootfs/etc/iptables/iptables.rules
 }
 
 main() {
@@ -254,6 +258,7 @@ main() {
   add_dependencies
   add_services
   add_user
+  privacy
 }
 
 main "$@"
