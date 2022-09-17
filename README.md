@@ -17,14 +17,13 @@ Fist, build a custom repository with AUR packages (~= 111M):
 
 And the iso:
 
-    # ./setup.sh
-    # cd /root/iso
-    # mkarchiso -v -o out .
+    $ sudo ./setup.sh
+    $ sudo ./iso-build.sh
 
 ## Make a bootable usb key
 You need a device with at least 2G of free space.
 
-    sudo dd bs=4M if=/root/iso/archimg.iso of=/dev/sdX status=progress oflag=sync
+    sudo dd bs=4M if=arch.iso of=/dev/sdX status=progress oflag=sync
 
 ## Login
 Default login are:

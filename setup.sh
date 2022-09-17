@@ -40,12 +40,13 @@ copy_release() {
   check_dep unzip unzip
   check_dep mpd mpd
   [ -d /usr/share/archiso/configs/releng ] || die "archiso dir no found"
+
   cp -r /usr/share/archiso/configs/releng "$WORKDIR"
   sed -i 's/MODULES=()/MODULES=(i915? amdgpu? radeon? nouveau? vboxvideo? vmwgfx?)/g' "$WORKDIR"/airootfs/etc/mkinitcpio.conf
 }
 
 create_dirs() {
-  mkdir "$WORKDIR"
+  mkdir -p "$WORKDIR"
   mkdir -p "$HOME_DIR"/{.config,.dotfiles,images}
   mkdir -p "$HOME_DIR"/.local/share/fonts
   cp -r configs/* "$WORKDIR"/airootfs/
@@ -64,51 +65,21 @@ download_dots() {
     && cp -r vifm/{.config,bin} "$HOME_DIR" \
     && cp -r audio/pulse-generic/bin/volume.sh "$HOME_DIR"/bin/ \
     && cp -r themes "$HOME_DIR"/.dotfiles/ \
-    && cp -r "$CURR_USER"/.vim/{plugged,autoload} "$HOME_DIR"/.vim/ \
-    && cp -r "$CURR_USER"/.local/share/fonts/{cyberpunk,MaterialDesign-Font-master,SpaceMono-2.1.0} "$HOME_DIR"/.local/share/fonts/ \
     && ./install --dest "$HOME_DIR" --images
   )
   cat << EOF | tee -a "$HOME_DIR"/.config/awesome/module/autostart.lua
 app.run_once({'systemctl --user start mpd'})
 EOF
   cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PostLogin
-#!/bin/sh
+#!/usr/bin/env sh
 [ -f ~/.config/awesome/loaded-theme.lua ] || (cd ~/.dotfiles/themes && stow $THEME -t ~)
-EOF
-  cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
-terminal = os.getenv("TERMINAL") or "xst"
-terminal_cmd = terminal .. " -e "
-editor = os.getenv("EDITOR") or "vim"
-editor_cmd = terminal .. " -e " .. editor
-web_browser = "tor-browser"
-file_browser = "vifm"
-terminal_args = { " -c ", " -e " }
-net_device = "lo"
-disks = { "/" }
-cpu_core = 1
-sound_system = "pulseaudio"
-password = "awesome"
 EOF
 }
 
-add_omz() {
-  echo "Adding oh-my-zsh"
+copy_from_home() {
   cp -r "$CURR_USER"/.oh-my-zsh "$HOME_DIR"/
-
-cat << EOF | tee "$HOME_DIR"/.zshrc
-export PATH=\$HOME/bin:\$PATH
-export PATH="\$PATH:\$(ruby -e 'puts Gem.user_dir')/bin"
-export TERMINAL=xst
-export GPG_TTY=\$(tty)
-export GPG_AGENT_INFO=""
-export ZSH=\$HOME/.oh-my-zsh
-# Oh-my-zsh
-ZSH_THEME="random"
-DISABLE_UPDATE_PROMPT=true
-DISABLE_AUTO_UPDATE=true
-source \$ZSH/oh-my-zsh.sh
-alias vifm=vifmrun
-EOF
+  cp -r "$CURR_USER"/.vim/{plugged,autoload} "$HOME_DIR"/.vim/
+  cp -r "$CURR_USER"/.local/share/fonts/{cyberpunk,MaterialDesign-Font-master,SpaceMono-2.1.0} "$HOME_DIR"/.local/share/fonts/
 }
 
 add_archzfs() {
@@ -283,7 +254,7 @@ main() {
   copy_release
   create_dirs
   download_dots
-  add_omz
+  copy_from_home
   add_archzfs
   remove_packages
   add_dependencies
