@@ -1,0 +1,12 @@
+terminal = os.getenv("TERMINAL") or "xst"
+terminal_cmd = terminal .. " -e "
+editor = os.getenv("EDITOR") or "vim"
+editor_cmd = terminal .. " -e " .. editor
+web_browser = "tor-browser"
+file_browser = "vifm"
+terminal_args = { " -c ", " -e " }
+net_device = "lo"
+disks = { "/" }
+cpu_core = 1
+sound_system = "pulseaudio"
+password = "awesome"
