@@ -233,6 +233,8 @@ file_permissions+=(
   ["/etc/skel/"]="0:0:755"
   ["/etc/sudoers.d"]="0:0:750"
   ["/etc/tor"]="0:0:755"
+  ["/usr/lib/systemd/system/"]="0:0:775"
+  ["/usr/lib/systemd/system-generators/"]="0:0:775"
 )
 _EOF_
 }

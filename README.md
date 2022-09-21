@@ -21,7 +21,7 @@ And the iso:
     $ sudo ./iso-build.sh
 
 ## Make a bootable usb key
-You need a device with at least 2G of free space.
+You need a device with at least 2G (1.4G for the iso) of free space.
 
     sudo dd bs=4M if=arch.iso of=/dev/sdX status=progress oflag=sync
 
