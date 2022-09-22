@@ -54,6 +54,7 @@ gen_packages() {
   build_src "ruby-interfacez"
   build_src "ruby-rainbow"
   build_src "ruby-spior"
+  build_src "ruby-getch"
 }
 
 create_repo() {
@@ -73,6 +74,7 @@ main() {
   aur cava
   tor_key
   aur tor-browser
+  aur brave-bin
   gen_packages
   create_repo
 }
