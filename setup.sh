@@ -223,6 +223,14 @@ privacy() {
   iptables-save -f "$WORKDIR"/airootfs/etc/iptables/iptables.rules
 }
 
+auth() {
+  sudo_dir="$WORKDIR/airootfs/etc/sudoers.d"
+  cat > "$sudo_dir/zzz_halt" <<- _EOF_
+$username ALL = NOPASSWD: /sbin/poweroff ""
+$username ALL = NOPASSWD: /sbin/reboot ""
+_EOF_
+}
+
 fix_permissions() {
   cat >> "$WORKDIR"/profiledef.sh <<- _EOF_
 file_permissions+=(
@@ -263,6 +271,7 @@ main() {
   add_services
   add_user
   privacy
+  auth
   fix_permissions
   clean_the_useless
 }
