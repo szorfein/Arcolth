@@ -7,11 +7,11 @@ Custom Archiso (not yet) focus on privacy.
 + `Mpd`: Music Player Daemon.
 + `Oh-my-zsh`
 + `Tmux`: Terminal multiplexer.
-+ `Tor-Browser`: A web browser focus on privacy.
++ Privacy web browsers: `Brave` and `Tor-Browser`.
 + `ZFS`: If need to install ZFS.
 
 ## Build iso
-Fist, build a custom repository with AUR packages (~= 111M):
+Fist, build a custom repository with AUR packages (~= 244M):
 
     $ ./build-pkgs.sh
 
@@ -21,7 +21,7 @@ And the iso:
     $ sudo ./iso-build.sh
 
 ## Make a bootable usb key
-You need a device with at least 2G (1.4G for the iso) of free space.
+You need a device with at least 2G of free space (1.5G for the iso).
 
     sudo dd bs=4M if=arch.iso of=/dev/sdX status=progress oflag=sync
 

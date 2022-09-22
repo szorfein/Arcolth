@@ -1,0 +1,24 @@
+# Maintainer: Szorfein <szorfein@protonmail.com>
+
+_gemname_="getch"
+pkgname="ruby-${_gemname_}"
+pkgver=0.3.0
+pkgrel=1
+pkgdesc="A CLI tool to install Gentoo or VoidLinux."
+arch=("x86_64")
+url="https://github.com/szorfein/getch"
+license=("Ruby" "MIT")
+depends=("ruby")
+makedepends=("ruby")
+options=(!emptydirs)
+source=("https://rubygems.org/downloads/${_gemname_}-${pkgver}.gem")
+
+package() {
+	local _gemdir_="$(ruby -e'puts Gem.default_dir')"
+
+	gem install --ignore-dependencies --no-user-install -i "${pkgdir}/${_gemdir_}" "${_gemname_}-${pkgver}.gem"
+
+	rm "${pkgdir}/${_gemdir_}/cache/${_gemname_}-${pkgver}.gem"
+}
+
+sha256sums=('da3eedd2b4b7955ec68e6ecad9ef575af5aa5f5a085dc5cce3e3019e649644f9')

@@ -57,7 +57,7 @@ download_dots() {
   [ -f /tmp/dotfiles.tar.gz ] || curl -s -L -o /tmp/dotfiles.tar.gz https://github.com/szorfein/dotfiles/archive/main.tar.gz
   [ -d /tmp/dotfiles-main ] || (cd /tmp && tar xf dotfiles.tar.gz)
   (cd /tmp/dotfiles-main \
-    && cp -r awesomewm/.config/awesome "$HOME_DIR"/.config/ \
+    && cp -r awesomewm/.config/* "$HOME_DIR"/.config/ \
     && cp -r .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
     && cp -r vim/{.vim,.vimrc} "$HOME_DIR" \
     && cp -r ncmpcpp/.ncmpcpp "$HOME_DIR" \
@@ -162,6 +162,7 @@ tor
 iptables
 macchanger
 # AUR
+brave-bin
 cava
 tor-browser
 xst-git
@@ -173,6 +174,7 @@ ruby-tty-which
 ruby-interfacez
 ruby-rainbow
 ruby-spior
+ruby-getch
 EOF
 }
 
@@ -233,8 +235,6 @@ file_permissions+=(
   ["/etc/skel/"]="0:0:755"
   ["/etc/sudoers.d"]="0:0:750"
   ["/etc/tor"]="0:0:755"
-  ["/usr/lib/systemd/system/"]="0:0:775"
-  ["/usr/lib/systemd/system-generators/"]="0:0:775"
 )
 _EOF_
 }
