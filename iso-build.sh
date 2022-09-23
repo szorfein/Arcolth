@@ -11,4 +11,4 @@ die() { echo "[-] $1"; exit 1; }
 [ -d "$WORKDIR" ] || die "$WORKDIR no found, launch ./setup.sh first."
 [ -d "$DEST" ] || die "$DEST no found, create or correct the path please."
 
-mkarchiso -v -L "Archae" -w "$WORKDIR" -o "$DEST" "$WORKDIR"
+mkarchiso -v -w "$WORKDIR" -o "$DEST" "$WORKDIR"
