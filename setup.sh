@@ -247,11 +247,19 @@ file_permissions+=(
 _EOF_
 }
 
+fix_boot() {
+  # restore systemd-boot
+  sed -i 's/uefi-x64.grub.esp/uefi-x64.systemd-boot.esp/g' "$WORKDIR"/profiledef.sh
+  sed -i 's/uefi-x64.grub.eltorito/uefi-x64.systemd-boot.eltorito/g' "$WORKDIR"/profiledef.sh
+}
+
 remove_packages() {
   # Remove grml-zsh-config, we have a default .zshrc
   sed -i 's/grml-zsh-config//g' "$WORKDIR"/packages.x86_64
   sed -i 's/vim//g' "$WORKDIR"/packages.x86_64 # we use gvim
   sed -i 's/virtualbox-guest-utils-nox//g' "$WORKDIR"/packages.x86_64
+  sed -i 's/ipw2100-fw//g' "$WORKDIR"/packages.x86_64
+  sed -i 's/ipw2200-fw//g' "$WORKDIR"/packages.x86_64
 }
 
 clean_the_useless() {
@@ -273,6 +281,7 @@ main() {
   privacy
   auth
   fix_permissions
+  fix_boot
   clean_the_useless
 }
 
