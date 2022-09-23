@@ -38,13 +38,23 @@ tor_key() {
   curl -s https://openpgpkey.torproject.org/.well-known/openpgpkey/torproject.org/hu/kounek7zrdx745qydx6p59t9mqjpuhdf | gpg --import -
 }
 
-gen_packages() {
-  cp -a packages/lxdm-theme-archaeidae "$WORKDIR"/
+build_src() {
   (cd "$WORKDIR" \
-    && cd lxdm-theme-archaeidae \
-    && makepkg --noconfirm -s \
-    && cp lxdm-theme-archaeidae-*.pkg.tar.zst "$DEST"/
+    && cd "$1" \
+    && makepkg --noconfirm -s -d \
+    && cp "$1"-*.pkg.tar.zst "$DEST"/
   )
+}
+
+gen_packages() {
+  cp -a packages/* "$WORKDIR"/
+  build_src "lxdm-theme-archaeidae"
+  build_src "ruby-nomansland"
+  build_src "ruby-tty-which"
+  build_src "ruby-interfacez"
+  build_src "ruby-rainbow"
+  build_src "ruby-spior"
+  build_src "ruby-getch"
 }
 
 create_repo() {
@@ -62,9 +72,9 @@ main() {
   aur yay
   aur xst-git
   aur cava
-  aur python-ueberzug
   tor_key
   aur tor-browser
+  aur brave-bin
   gen_packages
   create_repo
 }

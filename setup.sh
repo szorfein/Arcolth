@@ -2,10 +2,11 @@
 
 set -o errexit -o nounset
 
-WORKDIR="/root/iso"
+WORKDIR="/root/iso-$(date +%Y.%m)"
 HOME_DIR="$WORKDIR"/airootfs/etc/skel
 THEME="lines"
 PKGS=/tmp/pkgs
+CURR_USER="/home/ninja"
 
 die() { echo "[-] $1"; exit 1; }
 goodbye() { echo; echo "[+] Script ended, bye"; exit 0; }
@@ -39,82 +40,46 @@ copy_release() {
   check_dep unzip unzip
   check_dep mpd mpd
   [ -d /usr/share/archiso/configs/releng ] || die "archiso dir no found"
-  cp -a /usr/share/archiso/configs/releng "$WORKDIR"
+
+  cp -r /usr/share/archiso/configs/releng "$WORKDIR"
   sed -i 's/MODULES=()/MODULES=(i915? amdgpu? radeon? nouveau? vboxvideo? vmwgfx?)/g' "$WORKDIR"/airootfs/etc/mkinitcpio.conf
 }
 
 create_dirs() {
-  [ -d "$WORKDIR" ] || mkdir "$WORKDIR"
-  [ -d "$HOME_DIR"/.config ] || mkdir -p "$HOME_DIR"/.config
-  [ -d "$HOME_DIR"/.dotfiles ] || mkdir "$HOME_DIR"/.dotfiles
-  [ -d "$HOME_DIR"/images ] || mkdir "$HOME_DIR"/images
-  cp -a configs/* "$WORKDIR"/airootfs/
-  chmod -R 740 "$WORKDIR"/airootfs/etc/sudoers.d
+  mkdir -p "$WORKDIR"
+  mkdir -p "$HOME_DIR"/{.config,.dotfiles,images}
+  mkdir -p "$HOME_DIR"/.local/share/fonts
+  cp -r configs/* "$WORKDIR"/airootfs/
 }
 
 download_dots() {
   echo "Adding dotfiles"
   [ -f /tmp/dotfiles.tar.gz ] || curl -s -L -o /tmp/dotfiles.tar.gz https://github.com/szorfein/dotfiles/archive/main.tar.gz
-  [ -d /tmp/dotfiles-master ] || (cd /tmp && tar xf dotfiles.tar.gz)
+  [ -d /tmp/dotfiles-main ] || (cd /tmp && tar xf dotfiles.tar.gz)
   (cd /tmp/dotfiles-main \
-    && cp -a awesomewm/.config/awesome "$HOME_DIR"/.config/ \
-    && cp -a .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
-    && cp -a vim/{.vim,.vimrc} "$HOME_DIR" \
-    && cp -a ncmpcpp/.ncmpcpp "$HOME_DIR" \
-    && cp -a tmux/.tmux.conf "$HOME_DIR" \
-    && cp -a vifm/{.config,bin} "$HOME_DIR" \
-    && cp -a audio/pulse-generic/bin/volume.sh "$HOME_DIR"/bin/ \
-    && cp -a themes "$HOME_DIR"/.dotfiles/ \
-    && ./install --dest "$HOME_DIR" --vim --images --fonts \
-    && rm -rf "$HOME_DIR"/.local/fonts/{Iosevka}* # we use the AUR pkgs
+    && cp -r awesomewm/.config/* "$HOME_DIR"/.config/ \
+    && cp -r .x/{.Xresources,.xinitrc,.xserverrc} "$HOME_DIR" \
+    && cp -r vim/{.vim,.vimrc} "$HOME_DIR" \
+    && cp -r ncmpcpp/.ncmpcpp "$HOME_DIR" \
+    && cp -r tmux/.tmux.conf "$HOME_DIR" \
+    && cp -r vifm/{.config,bin} "$HOME_DIR" \
+    && cp -r audio/pulse-generic/bin/volume.sh "$HOME_DIR"/bin/ \
+    && cp -r themes "$HOME_DIR"/.dotfiles/ \
+    && ./install --dest "$HOME_DIR" --images
   )
   cat << EOF | tee -a "$HOME_DIR"/.config/awesome/module/autostart.lua
 app.run_once({'systemctl --user start mpd'})
 EOF
   cat << EOF | tee "$WORKDIR"/airootfs/etc/lxdm/PostLogin
-#!/bin/sh
+#!/usr/bin/env sh
 [ -f ~/.config/awesome/loaded-theme.lua ] || (cd ~/.dotfiles/themes && stow $THEME -t ~)
-EOF
-  chmod 755 "$WORKDIR"/airootfs/etc/lxdm/PostLogin
-  cat << EOF | tee "$HOME_DIR"/.config/awesome/config/env.lua
-terminal = os.getenv("TERMINAL") or "xst"
-terminal_cmd = terminal .. " -e "
-editor = os.getenv("EDITOR") or "vim"
-editor_cmd = terminal .. " -e " .. editor
-web_browser = "tor-browser"
-file_browser = "vifm"
-terminal_args = { " -c ", " -e " }
-net_device = "lo"
-disks = { "/" }
-cpu_core = 1
-sound_system = "pulseaudio"
-password = "awesome"
 EOF
 }
 
-add_omz() {
-  echo "Adding oh-my-zsh"
-  [ -f /tmp/oh-my-zsh.tar.gz ] || curl -s -L -o /tmp/oh-my-zsh.tar.gz https://github.com/robbyrussell/oh-my-zsh/archive/master.tar.gz
-  [ -d /tmp/ohmyzsh-master ] || (cd /tmp && tar xf oh-my-zsh.tar.gz)
-  cp -a /tmp/ohmyzsh-master "$HOME_DIR"/.oh-my-zsh
-
-  # Remove grml-zsh-config, we have a default .zshrc
-  sed -i 's/grml-zsh-config//g' "$WORKDIR"/packages.x86_64
-
-cat << EOF | tee "$HOME_DIR"/.zshrc
-export PATH=\$HOME/bin:\$PATH
-export PATH="\$PATH:\$(ruby -e 'puts Gem.user_dir')/bin"
-export TERMINAL=xst
-export GPG_TTY=\$(tty)
-export GPG_AGENT_INFO=""
-export ZSH=\$HOME/.oh-my-zsh
-# Oh-my-zsh
-ZSH_THEME="random"
-DISABLE_UPDATE_PROMPT=true
-DISABLE_AUTO_UPDATE=true
-source \$ZSH/oh-my-zsh.sh
-alias vifm=vifmrun
-EOF
+copy_from_home() {
+  cp -r "$CURR_USER"/.oh-my-zsh "$HOME_DIR"/
+  cp -r "$CURR_USER"/.vim/{plugged,autoload} "$HOME_DIR"/.vim/
+  cp -r "$CURR_USER"/.local/share/fonts/{cyberpunk,MaterialDesign-Font-master,SpaceMono-2.1.0} "$HOME_DIR"/.local/share/fonts/
 }
 
 add_archzfs() {
@@ -149,17 +114,12 @@ EOF
 add_dependencies() {
   cat << EOF | tee -a "$WORKDIR"/packages.x86_64
 # Extra deps
-ruby
 gcc
 lxdm-gtk3
-materia-gtk-theme
-sudo
-xclip
 linux-headers
-tmux
-vifm
-scrot
-light
+materia-gtk-theme
+ruby
+sudo
 # Audio
 pulseaudio
 pulseaudio-alsa
@@ -174,10 +134,19 @@ xorg-xinput
 xf86-input-libinput
 # Awesome
 awesome
-picom
 feh
-stow
+gvim
 imagemagick
+light
+mpv
+picom
+ueberzug
+scrot
+stow
+tmux
+ttf-iosevka-nerd
+vifm
+xclip
 # Xorg
 xorg-server
 xorg-xprop
@@ -187,24 +156,25 @@ xorg-xrdb
 xf86-video-intel
 xf86-video-amdgpu
 xf86-video-nouveau
-# Nipe
-perl-config-simple
-perl-cpan-meta-check
-perl-yaml
-perl-capture-tiny
-perl-sub-name
-perl-pod-coverage
-iptables
+virtualbox-guest-utils
+# Privacy
 tor
+iptables
+macchanger
 # AUR
-yay
-xst-git
-ttf-iosevka-nerd
+brave-bin
 cava
-python-ueberzug
 tor-browser
+xst-git
+yay
 # Custom pkgs
 lxdm-theme-archaeidae
+ruby-nomansland
+ruby-tty-which
+ruby-interfacez
+ruby-rainbow
+ruby-spior
+ruby-getch
 EOF
 }
 
@@ -214,6 +184,7 @@ add_services() {
   mkdir -p "$want_dir"
   ln -s /usr/lib/systemd/system/lxdm.service "$WORKDIR"/airootfs/etc/systemd/system/display-manager.service
   ln -s /usr/lib/systemd/system/tor.service "$want_dir"/
+  ln -s /usr/lib/systemd/system/iptables.service "$want_dir"/
 }
 
 add_user() {
@@ -238,9 +209,61 @@ EOF
 root:!!::root
 $username:!!::
 EOF
- cat << EOF | tee -a "$WORKDIR"/airootfs/root/customize_airootfs.sh
+  cat << EOF | tee -a "$WORKDIR"/airootfs/root/customize_airootfs.sh
 chown -R $username:$username /home/$username
 EOF
+}
+
+privacy() {
+  echo "[+] Setting privacy..."
+  ln -sf /usr/share/zoneinfo/UTC "$WORKDIR"/airootfs/etc/localtime
+  [ -d "$WORKDIR"/airootfs/etc/iptables ] || \
+    mkdir -p "$WORKDIR"/airootfs/etc/iptables
+
+  iptables-save -f "$WORKDIR"/airootfs/etc/iptables/iptables.rules
+}
+
+auth() {
+  sudo_dir="$WORKDIR/airootfs/etc/sudoers.d"
+  cat > "$sudo_dir/zzz_halt" <<- _EOF_
+$username ALL = NOPASSWD: /sbin/poweroff ""
+$username ALL = NOPASSWD: /sbin/reboot ""
+_EOF_
+}
+
+fix_permissions() {
+  cat >> "$WORKDIR"/profiledef.sh <<- _EOF_
+file_permissions+=(
+  ["/etc/gshadow"]="0:0:400"
+  ["/etc/hostname"]="0:0:444"
+  ["/etc/iwd"]="0:0:755"
+  ["/etc/lxdm"]="0:0:755"
+  ["/etc/lxdm/PostLogin"]="0:0:777"
+  ["/etc/machine-id"]="0:0:444"
+  ["/etc/skel/"]="0:0:755"
+  ["/etc/sudoers.d"]="0:0:750"
+  ["/etc/tor"]="0:0:755"
+)
+_EOF_
+}
+
+fix_boot() {
+  # restore systemd-boot
+  sed -i 's/uefi-x64.grub.esp/uefi-x64.systemd-boot.esp/g' "$WORKDIR"/profiledef.sh
+  sed -i 's/uefi-x64.grub.eltorito/uefi-x64.systemd-boot.eltorito/g' "$WORKDIR"/profiledef.sh
+}
+
+remove_packages() {
+  # Remove grml-zsh-config, we have a default .zshrc
+  sed -i 's/grml-zsh-config//g' "$WORKDIR"/packages.x86_64
+  sed -i 's/vim//g' "$WORKDIR"/packages.x86_64 # we use gvim
+  sed -i 's/virtualbox-guest-utils-nox//g' "$WORKDIR"/packages.x86_64
+  sed -i 's/ipw2100-fw//g' "$WORKDIR"/packages.x86_64
+  sed -i 's/ipw2200-fw//g' "$WORKDIR"/packages.x86_64
+}
+
+clean_the_useless() {
+  rm -rf "$HOME_DIR"/.vim/plugged/**/.git
 }
 
 main() {
@@ -249,11 +272,17 @@ main() {
   copy_release
   create_dirs
   download_dots
-  add_omz
+  copy_from_home
   add_archzfs
+  remove_packages
   add_dependencies
   add_services
   add_user
+  privacy
+  auth
+  fix_permissions
+  fix_boot
+  clean_the_useless
 }
 
 main "$@"
